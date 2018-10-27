@@ -14,10 +14,10 @@ Files description:
 
 ## Examples
 
-<a href="https://twitter.com/SebHillaire/status/1054010642523480064" target="blank">Precomputed occlusion as SH</a> for cloud ambient lighting. Result as <a href="https://twitter.com/SebHillaire/status/1054358976043892736" target="blank">video</a> and as image (left directional occlusion as SH, right final cloud render):
+<a href="https://twitter.com/SebHillaire/status/1054010642523480064" target="blank">Precomputed occlusion as SH</a> for cloud ambient lighting. Result as <a href="https://twitter.com/SebHillaire/status/1054358976043892736" target="blank">video</a> and as images (1st image: directional occlusion as SH, 2nd image: final cloud render):
 
-<img src="https://pbs.twimg.com/media/DqCYBNTX0AEFlF_.jpg" alt="cloud" style="width:260px;"/>
-<img src="https://pbs.twimg.com/media/DqCYHtYXcAELUkR.jpg" alt="cloud" style="width:300px;"/>   
+<img src="https://pbs.twimg.com/media/DqCYBNTX0AEFlF_.jpg" alt="cloud" width="346px"/>
+<img src="https://pbs.twimg.com/media/DqCYHtYXcAELUkR.jpg" alt="cloud" width="400px"/>   
 
 ## Future
 
