@@ -146,7 +146,7 @@ sh2 shRotate(sh2 sh, float3x3 rotation)
 	// TODO verify and optimize
 	sh2 result;
 	result.x = sh.x;
-	float3 tmp = float3(sh.w, sh.y, sh.z);		// undo direction component shuffle to match function space
+	float3 tmp = float3(sh.w, sh.y, sh.z);		// undo direction component shuffle to match source/function space
 	result.yzw = mul(tmp, rotation).yzx;		// apply rotation and re-shuffle
 	return result;
 }
