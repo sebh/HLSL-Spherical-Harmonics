@@ -1,0 +1,706 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 9.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[     27072,        697]
+NotebookOptionsPosition[     26205,        667]
+NotebookOutlinePosition[     26839,        690]
+CellTagsIndexPosition[     26796,        687]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{"(*", "\[IndentingNewLine]", "   ", 
+  RowBox[{
+   RowBox[{"This", " ", "files", " ", "presents", " ", "2", " ", "bands", " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"a", ".", "k", ".", "a", ".", " ", "order"}], " ", "2"}], ")"}],
+     " ", "spherical", " ", "harmonics", " ", 
+    RowBox[{"results", ".", "\[IndentingNewLine]", "It"}], " ", "comes", " ", 
+    "from", " ", 
+    RowBox[{"https", ":"}]}], "//", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{"github", ".", "com"}], "/", "sebh"}], "/", "HLSL"}], "-", 
+    "Spherical", "-", "Harmonics"}]}], "\[IndentingNewLine]", "*)"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"(*", 
+  RowBox[{"Restart", " ", "the", " ", "kernel", " ", 
+   RowBox[{"(", 
+    RowBox[{
+    "helps", " ", "removes", " ", "all", " ", "definitions", " ", "for", " ", 
+     "instance"}], ")"}], "\[IndentingNewLine]", "Quit"}], "*)"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", "\[IndentingNewLine]", "    ", 
+   RowBox[{
+    RowBox[{"aToD", ":", " ", 
+     RowBox[{
+     "transformation", " ", "from", " ", "azimuth", " ", "and", " ", "zenith",
+       " ", "angle", " ", "to", " ", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"x", ",", "y", ",", "z"}], ")"}], ".", " ", 
+       "\[IndentingNewLine]", " ", "evalSh2"}]}], ":", " ", 
+     RowBox[{
+     "evaluate", " ", "SH2", " ", "for", " ", "a", " ", "direction", 
+      "\[IndentingNewLine]", "  ", 
+      RowBox[{"unprojSh2", ":", " ", 
+       RowBox[{
+       "unproject", " ", "a", " ", "SH2", " ", "encoded", " ", 
+        "function"}]}]}]}], ",", " ", 
+    RowBox[{"giving", " ", "its", " ", "value", " ", "along", " ", 
+     RowBox[{"(", 
+      RowBox[{"\[Theta]", ",", "\[Phi]"}], ")"}]}]}], "\[IndentingNewLine]", 
+   "*)"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"aToD", "[", 
+     RowBox[{"\[Theta]_", ",", "\[Phi]_"}], "]"}], " ", ":=", 
+    "\[IndentingNewLine]", 
+    RowBox[{"{", "\[IndentingNewLine]", " ", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"Cos", "[", "\[Phi]", "]"}], 
+       RowBox[{"Sin", "[", "\[Theta]", "]"}]}], ",", 
+      RowBox[{
+       RowBox[{"Sin", "[", "\[Phi]", "]"}], 
+       RowBox[{"Sin", "[", "\[Theta]", "]"}]}], ",", 
+      RowBox[{"Cos", "[", "\[Theta]", "]"}]}], "\[IndentingNewLine]", "}"}]}],
+    "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"evalSh2", "[", 
+     RowBox[{"\[Theta]_", ",", "\[Phi]_"}], "]"}], ":=", 
+    RowBox[{"{", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"d", " ", "=", " ", 
+        RowBox[{"aToD", "[", 
+         RowBox[{"\[Theta]", ",", "\[Phi]"}], "]"}]}], " ", ";", 
+       "\[IndentingNewLine]", "0.28209479177387814347403972578039"}], ",", 
+      "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"-", "0.48860251190291992158638462283836"}], "*", 
+       RowBox[{"d", "[", 
+        RowBox[{"[", "2", "]"}], "]"}]}], ",", "\[IndentingNewLine]", 
+      RowBox[{"0.48860251190291992158638462283836", "*", 
+       RowBox[{"d", "[", 
+        RowBox[{"[", "3", "]"}], "]"}]}], ",", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"-", "0.48860251190291992158638462283836"}], "*", 
+       RowBox[{"d", "[", 
+        RowBox[{"[", "1", "]"}], "]"}]}]}], "\[IndentingNewLine]", "}"}]}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"unprojSh2", "[", 
+     RowBox[{"shIn_", ",", "\[Theta]_", ",", "\[Phi]_"}], "]"}], ":=", 
+    RowBox[{
+     RowBox[{"{", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"sh", " ", "=", " ", 
+        RowBox[{"evalSh2", "[", 
+         RowBox[{"\[Theta]", ",", "\[Phi]"}], "]"}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"sh", "[", 
+          RowBox[{"[", "1", "]"}], "]"}], "*", 
+         RowBox[{"shIn", "[", 
+          RowBox[{"[", "1", "]"}], "]"}]}], " ", "+", " ", 
+        RowBox[{
+         RowBox[{"sh", "[", 
+          RowBox[{"[", "2", "]"}], "]"}], "*", 
+         RowBox[{"shIn", "[", 
+          RowBox[{"[", "2", "]"}], "]"}]}], " ", "+", " ", 
+        RowBox[{
+         RowBox[{"sh", "[", 
+          RowBox[{"[", "3", "]"}], "]"}], "*", 
+         RowBox[{"shIn", "[", 
+          RowBox[{"[", "3", "]"}], "]"}]}], " ", "+", " ", 
+        RowBox[{
+         RowBox[{"sh", "[", 
+          RowBox[{"[", "4", "]"}], "]"}], "*", 
+         RowBox[{"shIn", "[", 
+          RowBox[{"[", "4", "]"}], "]"}]}]}]}], " ", "\[IndentingNewLine]", 
+      "}"}], "[", 
+     RowBox[{"[", "1", "]"}], "]"}]}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<A few debug prints:\>\"", "]"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"aToD", "[", 
+    RowBox[{"0", ",", "0"}], "]"}], "\[IndentingNewLine]", 
+   RowBox[{"test", " ", "=", " ", 
+    RowBox[{"evalSh2", "[", 
+     RowBox[{"0", ",", "0"}], "]"}]}], "\[IndentingNewLine]", 
+   RowBox[{"unprojSh2", "[", 
+    RowBox[{"test", ",", "1", ",", "2"}], "]"}], 
+   "\[IndentingNewLine]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", "\[IndentingNewLine]", "    ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"From", " ", 
+      RowBox[{"https", ":"}]}], "//", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"d3cw3dd2w32x2b", ".", "cloudfront", ".", "net"}], "/", "wp"}],
+       "-", 
+      RowBox[{
+       RowBox[{
+        RowBox[{
+         RowBox[{"content", "/", "uploads"}], "/", "2011"}], "/", "06"}], "/",
+        "10"}], "-", 
+      RowBox[{"14.", 
+       RowBox[{"pdf", ".", "\[IndentingNewLine]", "A"}], " ", "cosine", " ", 
+       "lob", " ", "with", " ", "peak", " ", "in", " ", "a", " ", "specified",
+        " ", 
+       RowBox[{"(", 
+        RowBox[{"\[Theta]", ",", "\[Phi]"}], ")"}], " ", 
+       RowBox[{"direction", ".", "\[IndentingNewLine]", "The"}], " ", 
+       "integration", " ", "over", " ", "the", " ", "unit", " ", "sphere", 
+       " ", "is", " ", "\[Pi]"}]}]}], ",", " ", 
+    RowBox[{"and", " ", "this", " ", "is", " ", 
+     RowBox[{"correct", ".", "\[IndentingNewLine]", "  ", 
+      RowBox[{"(", 
+       RowBox[{
+       "even", " ", "though", " ", "it", " ", "does", " ", "have", " ", "a", 
+        " ", "negative", " ", "values", " ", "in", " ", "the", " ", 
+        "opposite", " ", "directin", " ", "from", " ", "the", " ", "lobe"}], 
+       ")"}], "."}]}]}], "\[IndentingNewLine]", "*)"}], "\[IndentingNewLine]",
+   "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"cosLobeDir", " ", "=", " ", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "0", ",", "0"}], "}"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"shCosLobe", " ", "=", " ", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Sqrt", "[", "\[Pi]", "]"}], "/", "2"}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"-", 
+         RowBox[{"Sqrt", "[", 
+          RowBox[{"\[Pi]", "/", "3"}], "]"}]}], "*", 
+        RowBox[{"cosLobeDir", "[", 
+         RowBox[{"[", "2", "]"}], "]"}]}], ",", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Sqrt", "[", 
+         RowBox[{"\[Pi]", "/", "3"}], "]"}], "*", 
+        RowBox[{"cosLobeDir", "[", 
+         RowBox[{"[", "3", "]"}], "]"}]}], ",", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"-", 
+         RowBox[{"Sqrt", "[", 
+          RowBox[{"\[Pi]", "/", "3"}], "]"}]}], "*", 
+        RowBox[{"cosLobeDir", "[", 
+         RowBox[{"[", "1", "]"}], "]"}]}]}], "}"}]}], ";"}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"SphericalPlot3D", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"unprojSh2", "[", 
+      RowBox[{"shCosLobe", ",", "\[Theta]", ",", "\[Phi]"}], "]"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{"\[Theta]", ",", "0", ",", "\[Pi]"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\[Phi]", ",", "0", ",", 
+       RowBox[{"2", " ", "\[Pi]"}]}], "}"}], ",", 
+     RowBox[{"PlotRange", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"-", "1"}], ",", "1"}], "}"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"ColorFunction", "\[Rule]", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"ColorData", "[", "\"\<Rainbow\>\"", "]"}], "[", "#6", "]"}],
+         "&"}], ")"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"PlotStyle", "\[Rule]", 
+      RowBox[{"Directive", "[", 
+       RowBox[{"Opacity", "[", "0.5", "]"}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"Axes", "\[Rule]", "True"}], " ", ",", " ", 
+     RowBox[{"AxesStyle", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"Red", ",", "Green", ",", "Blue"}], "}"}]}]}], 
+    "\[IndentingNewLine]", "]"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<Integral over the unit sphere:\>\"", "]"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"Integrate", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"1", "*", 
+      RowBox[{"Abs", "[", 
+       RowBox[{"Sin", "[", "\[Theta]", "]"}], "]"}]}], "\[IndentingNewLine]", 
+     ",", 
+     RowBox[{"{", 
+      RowBox[{"\[Theta]", ",", "0", ",", "\[Pi]"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\[Phi]", ",", "0", ",", 
+       RowBox[{"2", "\[Pi]"}]}], "}"}]}], "]"}], "\[IndentingNewLine]", 
+   RowBox[{
+   "Print", "[", 
+    "\"\<Integral over the unit sphere of cosine lobe (as SH):\>\"", "]"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"Integrate", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"unprojSh2", "[", 
+       RowBox[{"shCosLobe", ",", "\[Theta]", ",", "\[Phi]"}], "]"}], "*", 
+      RowBox[{"Sin", "[", "\[Theta]", "]"}]}], "\[IndentingNewLine]", ",", 
+     RowBox[{"{", 
+      RowBox[{"\[Theta]", ",", "0", ",", "\[Pi]"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\[Phi]", ",", "0", ",", 
+       RowBox[{"2", "\[Pi]"}]}], "}"}]}], "]"}]}]}]], "Input"],
+
+Cell["", "PageBreak",
+ PageBreakBelow->True],
+
+Cell["", "PageBreak",
+ PageBreakBelow->True],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", "\[IndentingNewLine]", "    ", 
+   RowBox[{
+    RowBox[{"Definition", " ", "of", " ", "a", " ", "few", " ", "phase", " ", 
+     RowBox[{"functions", ":", " ", 
+      RowBox[{
+       RowBox[{"(", "1", ")"}], " ", "schlick", " ", "approximation"}]}]}], 
+    ",", " ", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"(", "2", ")"}], " ", "Henyey"}], "-", 
+     RowBox[{"Greenstein", " ", "and"}]}], ",", " ", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"(", "3", ")"}], " ", "Cornette"}], "-", 
+     RowBox[{
+     "Shanks", "\[IndentingNewLine]", "  ", "Integrale", " ", "of", " ", 
+      "phase", " ", "function", " ", "over", " ", "the", " ", "unit", " ", 
+      "sphere", " ", "should", " ", "be", " ", "1", " ", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"it", " ", "is", " ", "a", " ", "unitless", " ", "function"}],
+         ")"}], "."}]}]}]}], "\[IndentingNewLine]", "*)"}], 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"phaseFuncSchlick", "[", 
+     RowBox[{"G_", ",", " ", "A_"}], "]"}], " ", ":=", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"{", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"k", " ", "=", " ", 
+        RowBox[{
+         RowBox[{"1.55", "*", "G"}], " ", "-", " ", 
+         RowBox[{"0.55", "*", "G", "*", "G", "*", "G"}]}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"tmp", " ", "=", " ", 
+        RowBox[{"1.0", " ", "+", " ", 
+         RowBox[{"k", "*", 
+          RowBox[{"Cos", "[", "A", "]"}]}]}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"1", "-", 
+          RowBox[{"k", "*", "k"}]}], ")"}], "/", 
+        RowBox[{"(", 
+         RowBox[{"(", 
+          RowBox[{"4.0", "*", "\[Pi]", "*", "tmp", "*", "tmp"}], ")"}], 
+         ")"}]}]}], "\[IndentingNewLine]", "}"}], "[", 
+     RowBox[{"[", "1", "]"}], "]"}]}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"phaseHG", "[", 
+     RowBox[{"G_", ",", " ", "A_"}], "]"}], " ", ":=", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"{", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"1", "-", 
+         RowBox[{"G", "*", "G"}]}], ")"}], "/", 
+       RowBox[{"(", 
+        RowBox[{"4.0", "*", "Pi", "*", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"1", "+", 
+            RowBox[{"G", "*", "G"}], "-", 
+            RowBox[{"2", "*", "G", "*", 
+             RowBox[{"Cos", "[", "A", "]"}]}]}], ")"}], "^", "1.5"}]}], 
+        ")"}]}], "\[IndentingNewLine]", "}"}], "[", 
+     RowBox[{"[", "1", "]"}], "]"}]}], "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+     RowBox[{"Cornette", "-", 
+      RowBox[{"Shanks", " ", "phase", " ", "function", " ", 
+       RowBox[{"http", ":"}]}]}], "//", 
+     RowBox[{
+      RowBox[{
+       RowBox[{
+        RowBox[{"www", ".", "csroc", ".", "org", ".", "tw"}], "/", 
+        "journal"}], "/", "JOC25"}], "-", 
+      RowBox[{"3", "/", "JOC25"}], "-", "3", "-", 
+      RowBox[{"2.", "pdf"}]}]}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"phaseCS", "[", 
+     RowBox[{"G_", ",", " ", "A_"}], "]"}], " ", ":=", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"{", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"3", "*", 
+         RowBox[{"(", 
+          RowBox[{"1", "-", 
+           RowBox[{"G", "*", "G"}]}], ")"}], "*", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", 
+           RowBox[{
+            RowBox[{"Cos", "[", "A", "]"}], "*", 
+            RowBox[{"Cos", "[", "A", "]"}]}]}], ")"}]}], ")"}], "/", 
+       RowBox[{"(", 
+        RowBox[{"4.0", "*", "\[Pi]", "*", "2", "*", 
+         RowBox[{"(", 
+          RowBox[{"2", "+", 
+           RowBox[{"G", "*", "G"}]}], ")"}], "*", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{"1", "+", 
+             RowBox[{"G", "*", "G"}], "-", 
+             RowBox[{"2", "*", "G", "*", 
+              RowBox[{"Cos", "[", "A", "]"}]}]}], ")"}], "^", "1.5"}], 
+          ")"}]}], ")"}]}], "\[IndentingNewLine]", "}"}], "[", 
+     RowBox[{"[", "1", "]"}], "]"}]}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+   "Print", "[", 
+    "\"\<Integral over the unit sphere of multiple phase function:\>\"", 
+    "]"}], "\[IndentingNewLine]", 
+   RowBox[{"Integrate", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"phaseHG", "[", 
+       RowBox[{"0.0", ",", " ", "\[Theta]"}], "]"}], " ", "*", 
+      RowBox[{"Sin", "[", "\[Theta]", "]"}]}], "\[IndentingNewLine]", ",", 
+     RowBox[{"{", 
+      RowBox[{"\[Theta]", ",", "0", ",", "\[Pi]"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\[Phi]", ",", "0", ",", 
+       RowBox[{"2", " ", "Pi"}]}], "}"}]}], "]"}], "\[IndentingNewLine]", 
+   RowBox[{"Integrate", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"phaseHG", "[", 
+       RowBox[{"0.9", ",", " ", "\[Theta]"}], "]"}], " ", "*", 
+      RowBox[{"Sin", "[", "\[Theta]", "]"}]}], "\[IndentingNewLine]", ",", 
+     RowBox[{"{", 
+      RowBox[{"\[Theta]", ",", "0", ",", "\[Pi]"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\[Phi]", ",", "0", ",", 
+       RowBox[{"2", " ", "Pi"}]}], "}"}]}], "]"}], "\[IndentingNewLine]", 
+   RowBox[{"Integrate", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"phaseFuncSchlick", "[", 
+       RowBox[{"0.0", ",", " ", "\[Theta]"}], "]"}], " ", "*", 
+      RowBox[{"Sin", "[", "\[Theta]", "]"}]}], "\[IndentingNewLine]", ",", 
+     RowBox[{"{", 
+      RowBox[{"\[Theta]", ",", "0", ",", "\[Pi]"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\[Phi]", ",", "0", ",", 
+       RowBox[{"2", " ", "Pi"}]}], "}"}]}], "]"}], "\[IndentingNewLine]", 
+   RowBox[{"Integrate", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"phaseFuncSchlick", "[", 
+       RowBox[{"0.9", ",", " ", "\[Theta]"}], "]"}], " ", "*", 
+      RowBox[{"Sin", "[", "\[Theta]", "]"}]}], "\[IndentingNewLine]", ",", 
+     RowBox[{"{", 
+      RowBox[{"\[Theta]", ",", "0", ",", "\[Pi]"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\[Phi]", ",", "0", ",", 
+       RowBox[{"2", " ", "Pi"}]}], "}"}]}], "]"}], "\[IndentingNewLine]", 
+   RowBox[{"Integrate", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"phaseCS", "[", 
+       RowBox[{"0.0", ",", " ", "\[Theta]"}], "]"}], " ", "*", 
+      RowBox[{"Sin", "[", "\[Theta]", "]"}]}], "\[IndentingNewLine]", ",", 
+     RowBox[{"{", 
+      RowBox[{"\[Theta]", ",", "0", ",", "\[Pi]"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\[Phi]", ",", "0", ",", 
+       RowBox[{"2", " ", "Pi"}]}], "}"}]}], "]"}], "\[IndentingNewLine]", 
+   RowBox[{"Integrate", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"phaseCS", "[", 
+       RowBox[{"0.9", ",", " ", "\[Theta]"}], "]"}], " ", "*", 
+      RowBox[{"Sin", "[", "\[Theta]", "]"}]}], "\[IndentingNewLine]", ",", 
+     RowBox[{"{", 
+      RowBox[{"\[Theta]", ",", "0", ",", "\[Pi]"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\[Phi]", ",", "0", ",", 
+       RowBox[{"2", " ", "Pi"}]}], "}"}]}], "]"}]}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", "\[IndentingNewLine]", "    ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+     "Plot", " ", "of", " ", "the", " ", "different", " ", "phase", " ", 
+      "functions", " ", "as", " ", "well", " ", "as", " ", "the", " ", "SH2", 
+      " ", "approximation", "    ", "presented", " ", "in", " ", 
+      RowBox[{"https", ":"}]}], "//", 
+     RowBox[{
+      RowBox[{
+       RowBox[{
+        RowBox[{
+         RowBox[{"bartwronski", ".", "files", ".", "wordpress", ".", "com"}], 
+         "/", "2014"}], "/", "08"}], "/", "bwronski_volumetric"}], "_fog", 
+      RowBox[{
+      "_siggraph2014", ".", "pdf", ".", "\[IndentingNewLine]", " ", "The"}], 
+      " ", "integral", " ", "of", " ", "all", " ", "the", " ", "phase", " ", 
+      "functions"}]}], ",", " ", 
+    RowBox[{
+    "as", " ", "well", " ", "as", " ", "the", " ", "SH", " ", 
+     "approximation"}], ",", " ", 
+    RowBox[{"is", " ", "1", " ", "as", " ", "expected", " ", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"unitless", " ", "function"}], ")"}], "."}]}]}], 
+   "\[IndentingNewLine]", "*)"}], "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"g", " ", "=", " ", "0.3"}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"phaseDir", " ", "=", " ", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "0", ",", "0"}], "}"}]}], ";"}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"shPhaseLobe", "[", 
+     RowBox[{"g_", ",", "d_"}], "]"}], ":=", 
+    RowBox[{"{", "\[IndentingNewLine]", 
+     RowBox[{"0.28209479177387814347403972578039", ",", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"-", "0.48860251190291992158638462283836"}], "*", "g", "*", 
+       RowBox[{"d", "[", 
+        RowBox[{"[", "2", "]"}], "]"}]}], ",", "\[IndentingNewLine]", 
+      RowBox[{"0.48860251190291992158638462283836", "*", "g", "*", 
+       RowBox[{"d", "[", 
+        RowBox[{"[", "3", "]"}], "]"}]}], ",", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"-", "0.48860251190291992158638462283836"}], "*", "g", "*", 
+       RowBox[{"d", "[", 
+        RowBox[{"[", "1", "]"}], "]"}]}]}], "\[IndentingNewLine]", "}"}]}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"shPhase", " ", "=", " ", 
+     RowBox[{"shPhaseLobe", "[", 
+      RowBox[{"g", ",", " ", "phaseDir"}], "]"}]}], ";"}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+   "Print", "[", 
+    "\"\<HG, CS and SH2 approximation for different g values.\>\"", "]"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"Table", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"{", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"SphericalPlot3D", "[", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"phaseHG", "[", 
+          RowBox[{"g", " ", ",", " ", 
+           RowBox[{"ArcCos", "[", 
+            RowBox[{"Dot", "[", 
+             RowBox[{
+              RowBox[{"aToD", "[", 
+               RowBox[{"\[Theta]", ",", "\[Phi]"}], "]"}], ",", "phaseDir"}], 
+             "]"}], "]"}]}], "]"}], ",", "\[IndentingNewLine]", 
+         RowBox[{"{", 
+          RowBox[{"\[Theta]", ",", "0", ",", "\[Pi]"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"\[Phi]", ",", "0", ",", 
+           RowBox[{"2", " ", "\[Pi]"}]}], "}"}], ",", 
+         RowBox[{"PlotRange", "\[Rule]", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"-", "0.35"}], ",", "0.35"}], "}"}]}], ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{"ColorFunction", "\[Rule]", 
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"ColorData", "[", "\"\<Rainbow\>\"", "]"}], "[", "#6", 
+             "]"}], "&"}], ")"}]}], ",", "\[IndentingNewLine]", 
+         RowBox[{"PlotStyle", "\[Rule]", 
+          RowBox[{"Directive", "[", 
+           RowBox[{"Opacity", "[", "0.5", "]"}], "]"}]}], ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{"Axes", "\[Rule]", "True"}], " ", ",", " ", 
+         RowBox[{"AxesStyle", "\[Rule]", 
+          RowBox[{"{", 
+           RowBox[{"Red", ",", "Green", ",", "Blue"}], "}"}]}], ",", " ", 
+         RowBox[{"ImageSize", "\[Rule]", "170"}]}], "\[IndentingNewLine]", 
+        "]"}], ",", "\[IndentingNewLine]", 
+       RowBox[{"SphericalPlot3D", "[", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"phaseCS", "[", 
+          RowBox[{"g", " ", ",", " ", 
+           RowBox[{"ArcCos", "[", 
+            RowBox[{"Dot", "[", 
+             RowBox[{
+              RowBox[{"aToD", "[", 
+               RowBox[{"\[Theta]", ",", "\[Phi]"}], "]"}], ",", "phaseDir"}], 
+             "]"}], "]"}]}], "]"}], ",", "\[IndentingNewLine]", 
+         RowBox[{"{", 
+          RowBox[{"\[Theta]", ",", "0", ",", "\[Pi]"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"\[Phi]", ",", "0", ",", 
+           RowBox[{"2", " ", "\[Pi]"}]}], "}"}], ",", 
+         RowBox[{"PlotRange", "\[Rule]", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"-", "0.35"}], ",", "0.35"}], "}"}]}], ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{"ColorFunction", "\[Rule]", 
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"ColorData", "[", "\"\<Rainbow\>\"", "]"}], "[", "#6", 
+             "]"}], "&"}], ")"}]}], ",", "\[IndentingNewLine]", 
+         RowBox[{"PlotStyle", "\[Rule]", 
+          RowBox[{"Directive", "[", 
+           RowBox[{"Opacity", "[", "0.5", "]"}], "]"}]}], ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{"Axes", "\[Rule]", "True"}], " ", ",", " ", 
+         RowBox[{"AxesStyle", "\[Rule]", 
+          RowBox[{"{", 
+           RowBox[{"Red", ",", "Green", ",", "Blue"}], "}"}]}], ",", " ", 
+         RowBox[{"ImageSize", "\[Rule]", "170"}]}], "\[IndentingNewLine]", 
+        "]"}], ",", "\[IndentingNewLine]", 
+       RowBox[{"SphericalPlot3D", "[", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"shPhase", " ", "=", " ", 
+           RowBox[{"shPhaseLobe", "[", 
+            RowBox[{"g", ",", " ", "phaseDir"}], "]"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"unprojSh2", "[", 
+           RowBox[{"shPhase", ",", "\[Theta]", ",", "\[Phi]"}], "]"}]}], ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{"{", 
+          RowBox[{"\[Theta]", ",", "0", ",", "\[Pi]"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"\[Phi]", ",", "0", ",", 
+           RowBox[{"2", " ", "\[Pi]"}]}], "}"}], ",", 
+         RowBox[{"PlotRange", "\[Rule]", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"-", "0.35"}], ",", "0.35"}], "}"}]}], ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{"ColorFunction", "\[Rule]", 
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"ColorData", "[", "\"\<Rainbow\>\"", "]"}], "[", "#6", 
+             "]"}], "&"}], ")"}]}], ",", "\[IndentingNewLine]", 
+         RowBox[{"PlotStyle", "\[Rule]", 
+          RowBox[{"Directive", "[", 
+           RowBox[{"Opacity", "[", "0.5", "]"}], "]"}]}], ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{"Axes", "\[Rule]", "True"}], " ", ",", " ", 
+         RowBox[{"AxesStyle", "\[Rule]", 
+          RowBox[{"{", 
+           RowBox[{"Red", ",", "Green", ",", "Blue"}], "}"}]}], ",", " ", 
+         RowBox[{"ImageSize", "\[Rule]", "170"}]}], "\[IndentingNewLine]", 
+        "]"}]}], "\[IndentingNewLine]", "}"}], "\[IndentingNewLine]", 
+     RowBox[{"(*", 
+      RowBox[{
+      "phaseCS", " ", "could", " ", "be", " ", "approximated", " ", "nicely", 
+       " ", "with", " ", "two", " ", "sh2", " ", 
+       RowBox[{"lob", "?"}]}], "*)"}], "\[IndentingNewLine]", ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{"g", ",", 
+       RowBox[{"{", 
+        RowBox[{"0.0", ",", "0.1", ",", "0.5", ",", "0.9"}], "}"}]}], "}"}]}],
+     "\[IndentingNewLine]", "]"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<Integral of SH2 approximation for g=\>\"", ",", "g"}], "]"}],
+    "\[IndentingNewLine]", 
+   RowBox[{"Integrate", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"unprojSh2", "[", 
+       RowBox[{"shPhase", ",", "\[Theta]", ",", "\[Phi]"}], "]"}], "*", 
+      RowBox[{"Sin", "[", "\[Theta]", "]"}]}], "\[IndentingNewLine]", ",", 
+     RowBox[{"{", 
+      RowBox[{"\[Theta]", ",", "0", ",", "\[Pi]"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\[Phi]", ",", "0", ",", 
+       RowBox[{"2", "\[Pi]"}]}], "}"}]}], "]"}], 
+   "\[IndentingNewLine]"}]}]], "Input"]
+},
+WindowSize->{858, 943},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+PrintingCopies->1,
+PrintingPageRange->{32000, 32000},
+PrintingOptions->{"Magnification"->1.,
+"PaperOrientation"->"Portrait",
+"PaperSize"->{612, 792}},
+TrackCellChangeTimes->False,
+Magnification->1.100000023841858,
+FrontEndVersion->"9.0 for Microsoft Windows (64-bit) (November 20, 2012)",
+StyleDefinitions->FrontEnd`FileName[{"Report"}, "StandardReport.nb", 
+  CharacterEncoding -> "WindowsANSI"]
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[557, 20, 635, 15, 103, "Input"],
+Cell[1195, 37, 269, 6, 63, "Input"],
+Cell[1467, 45, 4110, 104, 623, "Input"],
+Cell[5580, 151, 4810, 122, 623, "Input"],
+Cell[10393, 275, 44, 1, 1, "PageBreak",
+ PageBreakBelow->True],
+Cell[10440, 278, 44, 1, 4, "PageBreak",
+ PageBreakBelow->True],
+Cell[10487, 281, 7158, 181, 883, "Input"],
+Cell[17648, 464, 8553, 201, 1146, "Input"]
+}
+]
+*)
+
+(* End of internal cache information *)
