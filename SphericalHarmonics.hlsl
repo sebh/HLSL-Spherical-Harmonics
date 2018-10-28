@@ -16,6 +16,9 @@
 //
 
 //
+// Provided functions are commented. A "SH function" means a "spherical function represented as spherical harmonics".
+// You can also find a FAQ below.
+//
 //**** HOW TO PROJECT RADIANCE FROM A SPHERE INTO SH?
 // 
 //		// Initialise sh to 0
@@ -54,11 +57,16 @@
 
 
 
+#ifndef SPHERICAL_HARMONICS_HLSL
+#define SPHERICAL_HARMONICS_HLSL
+
+
+
 #define shPI 3.1415926536f
 
 
 
-// Generate uniform distribution of direction over a sphere. (from [1])
+// Generates a uniform distribution of directions over a sphere. (from [1])
 // azimuthX and zenithY are both in [0, 1]. You can use random value, stratified, etc.
 // Top and bottom sphere pole (+-zenith) are along the Y axis.
 float3 shGetUniformSphereSample(float azimuthX, float zenithY)
@@ -79,8 +87,8 @@ sh2 shZero()
 	return float4(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
-// Evaluate spherical harmonics from direction. (from [2] Appendix A2)
-// (evaluating the associated legendre polynomial using the polynomial form)
+// Evaluates spherical harmonics basis for a direction dir. (from [2] Appendix A2)
+// (evaluating the associated Legendre polynomials using the polynomial forms)
 sh2 shEvaluate(float3 dir)
 {
 	sh2 result;
@@ -91,7 +99,7 @@ sh2 shEvaluate(float3 dir)
 	return result;
 }
 
-// Recover the value of a function represented as SH in the direction dir.
+// Recovers the value of a SH function in the direction dir.
 float shUnproject(sh2 functionSh, float3 dir)
 {
 	sh2 sh = shEvaluate(dir);
@@ -103,8 +111,8 @@ float3 shUnproject(sh2 functionShX, sh2 functionShY, sh2 functionShZ, float3 dir
 	return float3(dot(functionShX, sh), dot(functionShY, sh), dot(functionShZ, sh));
 }
 
-// Project a cosine lobe function, with peak value in direction dir, into SH (from [4])
-// Integral over unit sphere is PI.
+// Projects a cosine lobe function, with peak value in direction dir, into SH. (from [4])
+// The integral over the unit sphere of the SH representation is PI.
 sh2 shEvaluateCosineLobe(float3 dir)
 {
 	sh2 result;
@@ -115,8 +123,8 @@ sh2 shEvaluateCosineLobe(float3 dir)
 	return result;
 }
 
-// Project a Henyey-Greenstein phase function, with peak value in direction dir, into SH. (from [11])
-// Integral over unit sphere is 1.
+// Projects a Henyey-Greenstein phase function, with peak value in direction dir, into SH. (from [11])
+// The integral over the unit sphere of the SH representation is 1.
 sh2 evaluatePhaseHG(float3 dir, float g)
 {
 	sh2 result;
@@ -128,19 +136,19 @@ sh2 evaluatePhaseHG(float3 dir, float g)
 	return result;
 }
 
-// Adds two functions represented by SH coefficients
+// Adds two SH functions together.
 sh2 shAdd(sh2 shL, sh2 shR)
 {
 	return shL + shR;
 }
 
-// Scale a function uniformly
+// Scales a SH function uniformly by v.
 sh2 shScale(sh2 sh, float v)
 {
 	return sh * v;
 }
 
-// Operate a rotation of the function represented by SH.
+// Operates a rotation of a SH function.
 sh2 shRotate(sh2 sh, float3x3 rotation)
 {
 	// TODO verify and optimize
@@ -151,13 +159,13 @@ sh2 shRotate(sh2 sh, float3x3 rotation)
 	return result;
 }
 
-// Integrate the product of two functions a and b represented by SH coefficients
+// Integrates the product of two SH functions over the unit sphere.
 float shFuncProductIntegral(sh2 shL, sh2 shR)
 {
 	return dot(shL, shR);
 }
 
-// Compute the SH coefficients of the projection of two functions that have been multiplied (from [4])
+// Computes the SH coefficients of a SH function representing the result of the multiplication of two SH functions. (from [4])
 sh2 shProduct(sh2 shL, sh2 shR)
 {
 	const float factor = 1.0f / (2.0f * sqrt(shPI));
@@ -169,8 +177,8 @@ sh2 shProduct(sh2 shL, sh2 shR)
 	);
 }
 
-// Convolve the function using a Hanning filtering. This helps reducing ringing and negative values. (from [2], Windowing p.16)
-// A lower value of w will reduce ringing (like the width of a filter)
+// Convolves a SH function using a Hanning filtering. This helps reducing ringing and negative values. (from [2], Windowing p.16)
+// A lower value of w will reduce ringing (like the frequency of a filter)
 sh2 shHanningConvolution( sh2 sh, float w ) 
 {
 	sh2 result = sh;
@@ -182,7 +190,7 @@ sh2 shHanningConvolution( sh2 sh, float w )
 	return result;
 }
 
-// Convolve the sh using a cosine lob. This is interesting to transform radiance to irradiance. (from [3], eq.7 & eq.8)
+// Convolves a SH function using a cosine lob. This is tipically used to transform radiance to irradiance. (from [3], eq.7 & eq.8)
 sh2 shDiffuseConvolution(sh2 sh)
 {
 	sh2 result = sh;
@@ -192,5 +200,9 @@ sh2 shDiffuseConvolution(sh2 sh)
 	result.yzw *= 2.0943951023931954923f;
 	return result;
 }
+
+
+
+#endif // SPHERICAL_HARMONICS_HLSL
 
 
