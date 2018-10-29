@@ -166,6 +166,8 @@ float shFuncProductIntegral(sh2 shL, sh2 shR)
 }
 
 // Computes the SH coefficients of a SH function representing the result of the multiplication of two SH functions. (from [4])
+// If sources have N bands, this product will result in 2N*1 bands as signal multiplication can add frequencies (think about two lobes intersecting).
+// To avoid that, the result can be truncated to N bands. It will just have a lower frequency, i.e. less details. (from [2], SH Products p.7)
 sh2 shProduct(sh2 shL, sh2 shR)
 {
 	const float factor = 1.0f / (2.0f * sqrt(shPI));
