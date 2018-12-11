@@ -66,15 +66,16 @@
 
 
 
-// Generates a uniform distribution of directions over a sphere. (from [1])
+// Generates a uniform distribution of directions over a unit sphere. 
+// Adapted from http://www.pbr-book.org/3ed-2018/Monte_Carlo_Integration/2D_Sampling_with_Multidimensional_Transformations.html#fragment-SamplingFunctionDefinitions-6
 // azimuthX and zenithY are both in [0, 1]. You can use random value, stratified, etc.
 // Top and bottom sphere pole (+-zenith) are along the Y axis.
 float3 shGetUniformSphereSample(float azimuthX, float zenithY)
 {
 	float phi = 2.0f * shPI * azimuthX;
-	float theta = 2.0f * acos(sqrt(1.0f - zenithY));
-	float3 dir = float3(sin(theta)*cos(phi), cos(theta), sin(theta)*sin(phi)); 
-	return dir;
+	float z = 1.0f - 2.0f * zenithY;
+	float r = sqrt(max(0.0f, 1.0f - z * z));
+	return float3(r * cos(phi), z, r * sin(phi));
 }
 
 
