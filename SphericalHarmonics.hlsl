@@ -2,7 +2,7 @@
 // SphericalHarmonics.hlsl from https://github.com/sebh/HLSL-Spherical-Harmonics
 
 // Great documents about spherical harmonics: 
-// [1]  http://silviojemma.com/public/papers/lighting/spherical-harmonic-lighting.pdf
+// [1]  http://www.cse.chalmers.se/~uffe/xjobb/Readings/GlobalIllumination/Spherical%20Harmonic%20Lighting%20-%20the%20gritty%20details.pdf
 // [2]  https://www.ppsloan.org/publications/StupidSH36.pdf
 // [3]  https://cseweb.ucsd.edu/~ravir/papers/envmap/envmap.pdf
 // [4]  https://d3cw3dd2w32x2b.cloudfront.net/wp-content/uploads/2011/06/10-14.pdf
