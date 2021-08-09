@@ -173,7 +173,7 @@ sh2 shProduct(sh2 shL, sh2 shR)
 {
 	const float factor = 1.0f / (2.0f * sqrt(shPI));
 	return factor * sh2(
-		shL.x*shR.w + shL.w+shR.x,
+		shL.x*shR.w + shL.w*shR.x,
 		shL.y*shR.w + shL.w*shR.y,
 		shL.z*shR.w + shL.w*shR.z,
 		dot(shL,shR)
