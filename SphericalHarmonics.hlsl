@@ -126,7 +126,7 @@ sh2 shEvaluateCosineLobe(float3 dir)
 
 // Projects a Henyey-Greenstein phase function, with peak value in direction dir, into SH. (from [11])
 // The integral over the unit sphere of the SH representation is 1.
-sh2 evaluatePhaseHG(float3 dir, float g)
+sh2 shEvaluatePhaseHG(float3 dir, float g)
 {
 	sh2 result;
 	const float factor = 0.48860251190291992158638462283836 * g;
