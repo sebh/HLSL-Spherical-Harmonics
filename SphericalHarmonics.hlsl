@@ -88,7 +88,8 @@ sh2 shZero()
 	return float4(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
-// Evaluates spherical harmonics basis for a direction dir. (from [2] Appendix A2)
+// Evaluates spherical harmonics basis for a direction dir.
+// This follows [2] Appendix A2 order when storing in x, y, z and w.
 // (evaluating the associated Legendre polynomials using the polynomial forms)
 sh2 shEvaluate(float3 dir)
 {
@@ -169,14 +170,16 @@ float shFuncProductIntegral(sh2 shL, sh2 shR)
 // Computes the SH coefficients of a SH function representing the result of the multiplication of two SH functions. (from [4])
 // If sources have N bands, this product will result in 2N*1 bands as signal multiplication can add frequencies (think about two lobes intersecting).
 // To avoid that, the result can be truncated to N bands. It will just have a lower frequency, i.e. less details. (from [2], SH Products p.7)
+// Note: - the code from [4] has been adapted to match the mapping from [2] we use. 
+//		 - !!! Be aware that this code has note yet be tested !!!
 sh2 shProduct(sh2 shL, sh2 shR)
 {
 	const float factor = 1.0f / (2.0f * sqrt(shPI));
 	return factor * sh2(
-		shL.x*shR.w + shL.w*shR.x,
+		dot(shL, shR),
 		shL.y*shR.w + shL.w*shR.y,
 		shL.z*shR.w + shL.w*shR.z,
-		dot(shL,shR)
+		shL.w*shR.w + shL.w*shR.w,
 	);
 }
 
