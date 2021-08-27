@@ -179,7 +179,7 @@ sh2 shProduct(sh2 shL, sh2 shR)
 		dot(shL, shR),
 		shL.y*shR.w + shL.w*shR.y,
 		shL.z*shR.w + shL.w*shR.z,
-		shL.w*shR.w + shL.w*shR.w,
+		shL.w*shR.w + shL.w*shR.w
 	);
 }
 
